@@ -11,7 +11,7 @@ import dev.devce.rocketnautics.content.orbit.universe.CubePlanet;
 import dev.devce.rocketnautics.mixin.SubLevelHoldingChunkAccessor;
 import dev.devce.rocketnautics.mixin.SubLevelHoldingChunkMapAccessor;
 import dev.devce.rocketnautics.network.SeamlessTransitionPayload;
-import dev.egg.SubLevelWarper;
+import dev.egg.dimensionalsable.SubLevelWarper;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
@@ -50,9 +50,6 @@ import java.util.*;
 @EventBusSubscriber(modid = RocketNautics.MODID)
 public class SpaceTransitionHandler {
     
-    public static double WARP_ENTITY_DETECTION_TOLERANCE = 0;
-    public static Quaterniondc PREMUL_ROTATION = null;
-
     public static final int CHUNK_LOADING_PARTITION_SIZES = 16;
     public static final double TRANSITION_SAFE_OFFSET = 1000.0;
     public static final double OVERWORLD_SPACE_Y = 20000.0;
@@ -97,11 +94,8 @@ public class SpaceTransitionHandler {
                             pl.teleportTo(deepSpace, claimed.getCenter().x() + o.x(), claimed.getCenter().y() + o.y(), claimed.getCenter().z() + o.z(), pl.getYRot(), pl.getXRot());
                         }
                         // note that unlike when we're exiting a deep space instance, we know for a fact the involved sublevels are loaded.
-                        WARP_ENTITY_DETECTION_TOLERANCE = 10;
-                        PREMUL_ROTATION = rotation;
-                        SubLevelWarper.WarpSubLevel(ship, deepSpace, claimed.getCenter().get(new Vector3d()));
-                        WARP_ENTITY_DETECTION_TOLERANCE = 0;
-                        PREMUL_ROTATION = null;
+                        // 1.1.0 Dimensional Sable warps the connected sublevel group and rotates entities/BEs itself.
+                        SubLevelWarper.warpConnectedSubLevels(ship, deepSpace, claimed.getCenter().get(new Vector3d()), rotation);
                         riding.forEach((p, e) -> p.startRiding(deepSpace.getEntity(e), true));
                     }
                 }
@@ -204,11 +198,7 @@ public class SpaceTransitionHandler {
                 Vector3d pos = ship.logicalPose().position();
                 if (instance.boundingBox().contains(pos.x(), pos.y(), pos.z())) {
                     Vector3d offset = pos.sub(instance.getCenter(), new Vector3d());
-                    WARP_ENTITY_DETECTION_TOLERANCE = 10;
-                    PREMUL_ROTATION = rot;
-                    SubLevelWarper.WarpSubLevel(ship, destLevel, rot.transform(offset).add(destPos));
-                    WARP_ENTITY_DETECTION_TOLERANCE = 0;
-                    PREMUL_ROTATION = null;
+                    SubLevelWarper.warpConnectedSubLevels(ship, destLevel, rot.transform(offset).add(destPos), rot);
                 }
                 iterator.remove();
             }

@@ -93,15 +93,10 @@ public class VectorThrusterBlockEntity extends RocketThrusterBlockEntity {
         if (level == null || level.isClientSide)
             return;
 
+        // CC-set gimbal holds its position until the computer sets a new target,
+        // rather than bleeding back to zero (#189).
         if (ccGimbalTimeout > 0) {
             ccGimbalTimeout--;
-        } else {
-            ccGimbalX *= 0.8f;
-            ccGimbalY *= 0.8f;
-            ccGimbalZ *= 0.8f;
-            if (Math.abs(ccGimbalX) < 0.001f) ccGimbalX = 0;
-            if (Math.abs(ccGimbalY) < 0.001f) ccGimbalY = 0;
-            if (Math.abs(ccGimbalZ) < 0.001f) ccGimbalZ = 0;
         }
 
         Direction nozzle = getThrustDirection();
