@@ -211,14 +211,18 @@ public class PlanetDefinitionBuilder {
             throw new IllegalStateException("Builder has no rotation defined!");
         }
         TimeStampedAngularCoordinates angularCoordinates = rotation.get().toCoordinates(destination, parent, position.get());
-        // mu / radius^2 = acceleration at surface + centrifugal acceleration
+        // mu / radius^2 = acceleration at surface
+        // Note: no centrifugal compensation here. The rotating-frame correction made sense for objects
+        // co-rotating with the planet, but deep-space Keplerian propagation is inertial: compensating the
+        // spin inflates mu by omega^2 * r^3 (for the Overworld's 1200s day that is +82 m/s^2, ~8.5x the
+        // surface gravity), making orbital velocity ~16.7 km/s and escape ~23.6 km/s - unreachable by
+        // any rocket. acceleration_at_surface is the inertial acceleration at `radius`, as documented.
         double mu;
         if (this.mu.isEmpty()) {
             if (accelerationAtSurface.isEmpty()) {
                 throw new IllegalStateException("Builder has no mu or surface acceleration defined!");
             }
-            double centrifugal = angularCoordinates.getRotationRate().getNormSq() * radius;
-            mu = (accelerationAtSurface.get() + centrifugal) * radius * radius;
+            mu = accelerationAtSurface.get() * radius * radius;
             if (mu <= 0) {
                 throw new IllegalStateException("Builder results in nonpositive mu [" + mu + "] with acceleration at surface [" + accelerationAtSurface.get() + "]!");
             }
