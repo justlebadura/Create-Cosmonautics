@@ -86,6 +86,16 @@ public class SputnikBlockEntity extends BlockEntity implements IHaveGoggleInform
         return lastWirelessRedstone;
     }
 
+    public void updateWirelessRedstone(String channel, double strength) {
+        if (channel != null && !channel.isEmpty()) {
+            if (strength > 0) {
+                lastWirelessRedstone.put(channel, strength);
+            } else {
+                lastWirelessRedstone.remove(channel);
+            }
+        }
+    }
+
     public Map<String, Double> getLastRadioPackets() {
         return lastRadioPackets;
     }

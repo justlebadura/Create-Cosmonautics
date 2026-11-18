@@ -1074,6 +1074,69 @@ public final class SputnikNodeGraphPanel {
                 // Subtle divider line between settings and pins
                 float divY = topY + 24.0f * zoom;
                 drawList.addLine(nx + 8.0f * zoom, divY, nx + nw - 8.0f * zoom, divY, ImColor.rgba(255, 255, 255, 30), 1.0f);
+            } else if ("redstone_receiver".equals(typeId) || "redstone_transmitter".equals(typeId)) {
+                float topY = ny + headerH + (isOld ? 4.0f : 6.0f) * zoom;
+                float inputW = nw - 20.0f * zoom;
+                if (zoom >= 0.55f) {
+                    ImGui.setCursorScreenPos(nx + 10.0f * zoom, topY);
+                    ImGui.pushItemWidth(inputW);
+                    ImString imStr = new ImString(node.getCustomString(), 256);
+                    if (ImGui.inputText("##rsc_" + node.getId(), imStr)) {
+                        node.setCustomString(imStr.get());
+                    }
+                    ImGui.popItemWidth();
+                } else {
+                    float boxH = 20.0f * zoom;
+                    drawList.addRectFilled(nx + 10.0f * zoom, topY, nx + 10.0f * zoom + inputW, topY + boxH,
+                            ImColor.rgba(15, 18, 22, 220));
+                    drawList.addRect(nx + 10.0f * zoom, topY, nx + 10.0f * zoom + inputW, topY + boxH,
+                            ImColor.rgba(50, 60, 70, 200));
+                    drawList.addText(nx + 14.0f * zoom, topY + 3.0f * zoom, 0xFFFFFFFF,
+                            node.getCustomString() == null ? "" : node.getCustomString());
+                }
+                if ("redstone_transmitter".equals(typeId)) {
+                    // Custom power fallback (used when no wire is connected)
+                    float numY = topY + 24.0f * zoom;
+                    if (zoom >= 0.55f) {
+                        ImGui.setCursorScreenPos(nx + 10.0f * zoom, numY);
+                        ImGui.pushItemWidth(inputW);
+                        ImDouble val = new ImDouble(node.getCustomNumber());
+                        if (ImGui.inputDouble("##rsp_" + node.getId(), val, 0.0, 0.0, "%.0f")) {
+                            node.setCustomNumber(val.get());
+                        }
+                        ImGui.popItemWidth();
+                    }
+                }
+                float divY = ny + headerH + (isOld ? 4.0f : 6.0f) * zoom + 48.0f * zoom;
+                drawList.addLine(nx + 8.0f * zoom, divY, nx + nw - 8.0f * zoom, divY, ImColor.rgba(255, 255, 255, 30), 1.0f);
+            } else if ("audio_play".equals(typeId)) {
+                float topY = ny + headerH + (isOld ? 4.0f : 6.0f) * zoom;
+                float inputW = nw - 20.0f * zoom;
+                if (zoom >= 0.55f) {
+                    ImGui.setCursorScreenPos(nx + 10.0f * zoom, topY);
+                    ImGui.pushItemWidth(inputW);
+                    ImDouble val = new ImDouble(node.getCustomNumber());
+                    if (ImGui.inputDouble("##af_" + node.getId(), val, 0.0, 0.0, "%.1f Hz")) {
+                        node.setCustomNumber(val.get());
+                    }
+                    ImGui.popItemWidth();
+
+                    float waveY = topY + 24.0f * zoom;
+                    ImGui.setCursorScreenPos(nx + 10.0f * zoom, waveY);
+                    ImGui.pushItemWidth(inputW);
+                    ImString imStr = new ImString(node.getCustomString(), 64);
+                    if (ImGui.inputText("##aw_" + node.getId(), imStr)) {
+                        node.setCustomString(imStr.get());
+                    }
+                    ImGui.popItemWidth();
+                } else {
+                    drawList.addText(nx + 10.0f * zoom, topY + 2.0f * zoom, 0xFFFFFFFF,
+                            String.format(Locale.ROOT, "%.1f Hz", node.getCustomNumber()));
+                    drawList.addText(nx + 10.0f * zoom, topY + 16.0f * zoom, 0xFFFFFFFF,
+                            node.getCustomString() == null ? "" : node.getCustomString());
+                }
+                float divY = topY + 48.0f * zoom;
+                drawList.addLine(nx + 8.0f * zoom, divY, nx + nw - 8.0f * zoom, divY, ImColor.rgba(255, 255, 255, 30), 1.0f);
             } else if ("satellite_comms".equals(typeId)) {
                 float topY = ny + headerH + (isOld ? 4.0f : 6.0f) * zoom;
 

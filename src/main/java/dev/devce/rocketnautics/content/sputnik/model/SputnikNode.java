@@ -21,6 +21,7 @@ public class SputnikNode {
     private final List<SputnikPin> inputs = new ArrayList<>();
     private final List<SputnikPin> outputs = new ArrayList<>();
     private final Map<String, Object> runtimeValues = new HashMap<>();
+    private final Map<String, Object> handlerState = new HashMap<>();
 
     public SputnikNode(int id, String typeId, float x, float y) {
         this.id = id;
@@ -52,6 +53,12 @@ public class SputnikNode {
         } else if ("sputnik_link".equals(typeId)) {
             this.width = 220.0f;
             this.height = 106.0f;
+        } else if ("redstone_transmitter".equals(typeId) || "redstone_receiver".equals(typeId)) {
+            this.width = 220.0f;
+            this.height = 130.0f;
+        } else if ("audio_play".equals(typeId)) {
+            this.width = 220.0f;
+            this.height = 130.0f;
         } else if ("satellite_comms".equals(typeId)) {
             this.width = 230.0f;
             this.height = 130.0f;
@@ -148,6 +155,11 @@ public class SputnikNode {
 
     public Map<String, Object> getRuntimeValues() {
         return runtimeValues;
+    }
+
+    /** Persistent scratch space for node handlers (survives graph evaluation ticks). */
+    public Map<String, Object> getHandlerState() {
+        return handlerState;
     }
 
     public SputnikPin findPin(String pinId) {

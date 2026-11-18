@@ -42,6 +42,11 @@ public final class SputnikNodeRegistry {
         register(new EngineThrustHandler());
         register(new EngineVectorHandler());
         register(new GyrodyneControlHandler());
+
+        register(new RedstoneTransmitterHandler());
+        register(new RedstoneReceiverHandler());
+        register(new MassSensorHandler());
+        register(new AudioPlayHandler());
     }
 
     public static void register(INodeHandler handler) {
@@ -270,6 +275,144 @@ public final class SputnikNodeRegistry {
         public void execute(SputnikNode node, NodeExecutionContext ctx) {
             boolean in = ctx.getInputAsBoolean("in", false);
             ctx.setOutput("out", !in);
+        }
+    }
+
+    private static class RedstoneTransmitterHandler implements INodeHandler {
+        public String getTypeId() { return "redstone_transmitter"; }
+        public String getTitle() { return "Redstone Transmitter"; }
+        public String getCategory() { return "Wireless"; }
+        public int getHeaderColor() { return ImColor.rgb(200, 60, 50); }
+        public List<SputnikPin> createInputs() {
+            return List.of(new SputnikPin("power", "Power", PinType.NUMBER, true));
+        }
+        public List<SputnikPin> createOutputs() { return List.of(); }
+        public void execute(SputnikNode node, NodeExecutionContext ctx) {
+            String channel = node.getCustomString();
+            if (channel == null || channel.isEmpty()) return;
+
+            Object powerVal = ctx.getInput("power");
+            int strength = 0;
+            if (powerVal instanceof Number n) {
+                strength = n.intValue();
+            } else if (powerVal instanceof Boolean b) {
+                strength = b ? 15 : 0;
+            } else {
+                strength = (int) Math.round(node.getCustomNumber());
+            }
+            strength = Math.max(0, Math.min(15, strength));
+
+            long gameTime = 0L;
+            if (ctx.getBlockEntity() != null) {
+                if (ctx.getBlockEntity().getLevel() != null) {
+                    gameTime = ctx.getBlockEntity().getLevel().getGameTime();
+                }
+                ctx.getBlockEntity().updateWirelessRedstone(channel, strength);
+            }
+            dev.devce.rocketnautics.content.sputnik.comms.WirelessRedstoneManager.transmit(channel, strength, gameTime);
+        }
+    }
+
+    private static class RedstoneReceiverHandler implements INodeHandler {
+        public String getTypeId() { return "redstone_receiver"; }
+        public String getTitle() { return "Redstone Receiver"; }
+        public String getCategory() { return "Wireless"; }
+        public int getHeaderColor() { return ImColor.rgb(200, 60, 50); }
+        public List<SputnikPin> createInputs() { return List.of(); }
+        public List<SputnikPin> createOutputs() {
+            return List.of(
+                    new SputnikPin("power", "Power", PinType.NUMBER, false),
+                    new SputnikPin("active", "Active", PinType.BOOLEAN, false)
+            );
+        }
+        public void execute(SputnikNode node, NodeExecutionContext ctx) {
+            String channel = node.getCustomString();
+            if (channel == null || channel.isEmpty()) {
+                ctx.setOutput("power", 0.0);
+                ctx.setOutput("active", false);
+                return;
+            }
+
+            long gameTime = ctx.getBlockEntity() != null && ctx.getBlockEntity().getLevel() != null
+                    ? ctx.getBlockEntity().getLevel().getGameTime() : 0L;
+            int power = dev.devce.rocketnautics.content.sputnik.comms.WirelessRedstoneManager.receive(channel, gameTime);
+            if (power <= 0 && ctx.getBlockEntity() != null) {
+                Double cached = ctx.getBlockEntity().getLastWirelessRedstone().get(channel);
+                if (cached != null) power = cached.intValue();
+            }
+            ctx.setOutput("power", (double) power);
+            ctx.setOutput("active", power > 0);
+        }
+    }
+
+    private static class MassSensorHandler implements INodeHandler {
+        public String getTypeId() { return "mass_sensor"; }
+        public String getTitle() { return "Mass Sensor"; }
+        public String getCategory() { return "Sensors"; }
+        public int getHeaderColor() { return ImColor.rgb(90, 70, 150); }
+        public List<SputnikPin> createInputs() { return List.of(); }
+        public List<SputnikPin> createOutputs() {
+            return List.of(new SputnikPin("mass", "Mass", PinType.NUMBER, false));
+        }
+        public void execute(SputnikNode node, NodeExecutionContext ctx) {
+            double mass = 0.0;
+            var be = ctx.getBlockEntity();
+            if (be != null && be.getLevel() != null) {
+                var subLevel = dev.ryanhcode.sable.Sable.HELPER.getContaining(be.getLevel(), be.getBlockPos());
+                if (subLevel instanceof dev.ryanhcode.sable.sublevel.ServerSubLevel serverSubLevel) {
+                    mass = serverSubLevel.getMassTracker().getMass();
+                }
+            }
+            ctx.setOutput("mass", mass);
+        }
+    }
+
+    private static class AudioPlayHandler implements INodeHandler {
+        public String getTypeId() { return "audio_play"; }
+        public String getTitle() { return "Play Tone"; }
+        public String getCategory() { return "Audio"; }
+        public int getHeaderColor() { return ImColor.rgb(60, 130, 200); }
+        public List<SputnikPin> createInputs() {
+            return List.of(
+                    new SputnikPin("play", "Play", PinType.BOOLEAN, true),
+                    new SputnikPin("freq", "Frequency", PinType.NUMBER, true),
+                    new SputnikPin("vol", "Volume", PinType.NUMBER, true)
+            );
+        }
+        public List<SputnikPin> createOutputs() { return List.of(); }
+        public void execute(SputnikNode node, NodeExecutionContext ctx) {
+            boolean play = ctx.getBooleanInput("play", false);
+            Map<String, Object> runtime = node.getHandlerState();
+            boolean wasPlaying = Boolean.TRUE.equals(runtime.get("__wasPlaying"));
+            long lastFire = runtime.get("__lastFire") instanceof Number n ? n.longValue() : Long.MIN_VALUE;
+            long gameTime = ctx.getBlockEntity() != null && ctx.getBlockEntity().getLevel() != null
+                    ? ctx.getBlockEntity().getLevel().getGameTime() : 0L;
+
+            // Fire on rising edge, then retrigger every 20 ticks while held for a continuous tone
+            boolean shouldFire = play && (!wasPlaying || gameTime - lastFire >= 20);
+            if (shouldFire) {
+                double frequency = ctx.getNumberInput("freq", node.getCustomNumber());
+                if (frequency <= 0) frequency = 440.0;
+                double volume = ctx.getNumberInput("vol", 1.0);
+                volume = Math.max(0.0, Math.min(1.0, volume));
+                String waveform = node.getCustomString();
+                if (waveform == null || waveform.isEmpty()) waveform = "sine";
+
+                var be = ctx.getBlockEntity();
+                if (be != null && be.getLevel() != null && !be.getLevel().isClientSide) {
+                    dev.devce.rocketnautics.network.NetworkHandler.sendPlayAudio(
+                            be.getLevel(), be.getBlockPos(),
+                            frequency, frequency,
+                            volume,
+                            1.1,
+                            waveform,
+                            0.01, 0.05, 0.9, 0.1,
+                            0.5, 0.0, 0.0, 0.0, 0.0,
+                            "", "");
+                }
+                runtime.put("__lastFire", gameTime);
+            }
+            runtime.put("__wasPlaying", play);
         }
     }
 
