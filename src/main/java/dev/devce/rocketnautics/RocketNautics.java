@@ -210,6 +210,10 @@ public class RocketNautics {
         // when multiple Sputnik blocks exist on the same level.
         if (!event.getLevel().isClientSide()) {
             dev.devce.rocketnautics.content.blocks.LinkedSignalHandler.tick(event.getLevel());
+            // Prune expired wireless redstone channels so one-shot signals don't accumulate
+            if (event.getLevel().getGameTime() % 100 == 0) {
+                dev.devce.rocketnautics.content.sputnik.comms.WirelessRedstoneManager.pruneStale(event.getLevel().getGameTime());
+            }
         }
     }
 

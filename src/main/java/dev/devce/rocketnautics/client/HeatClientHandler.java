@@ -27,6 +27,7 @@ import java.util.UUID;
 @EventBusSubscriber(modid = RocketNautics.MODID, value = Dist.CLIENT)
 public class HeatClientHandler {
     private static final Map<Vec3, Float> HEAT_MAP = new HashMap<>();
+    private static net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> LAST_DIMENSION;
 
     public static Map<Vec3, Float> getHeatMap() {
         return HEAT_MAP;
@@ -59,7 +60,24 @@ public class HeatClientHandler {
         }
 
         SubLevelContainer container = SubLevelContainer.getContainer(level);
-        if (container == null) return;
+        if (container == null) {
+            // No sublevel container in this dimension (e.g. non-ship dims): stale heat
+            // entries from the previous dimension would linger since the removeIf sweep
+            // below never runs here. Purge on dimension change instead.
+            if (LAST_DIMENSION != null && !LAST_DIMENSION.equals(level.dimension())) {
+                HEAT_MAP.clear();
+                PREVIOUS_POSITIONS.clear();
+            }
+            LAST_DIMENSION = level.dimension();
+            return;
+        }
+        if (!level.dimension().equals(LAST_DIMENSION)) {
+            // Level switched: positions in the maps belong to the old dimension's space
+            // and can no longer match any ship here.
+            HEAT_MAP.clear();
+            PREVIOUS_POSITIONS.clear();
+            LAST_DIMENSION = level.dimension();
+        }
 
         // Auto-generate reentry heat for ships traveling extremely fast in the upper atmosphere
         if (level.dimension() == net.minecraft.world.level.Level.OVERWORLD) {

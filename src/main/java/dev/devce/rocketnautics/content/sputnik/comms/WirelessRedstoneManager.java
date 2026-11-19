@@ -15,6 +15,16 @@ public final class WirelessRedstoneManager {
 
     private static final Map<String, ChannelData> CHANNELS = new ConcurrentHashMap<>();
 
+    /**
+     * Removes every channel whose last transmission is older than the expiry window.
+     * Expiry is normally enforced lazily on receive; this prunes channels nobody reads
+     * anymore so one-shot signals cannot accumulate. Call periodically (e.g. level tick).
+     */
+    public static void pruneStale(long gameTime) {
+        if (gameTime <= 0) return;
+        CHANNELS.entrySet().removeIf(e -> (gameTime - e.getValue().lastGameTime) > 2);
+    }
+
     private WirelessRedstoneManager() {}
 
     public static void transmit(String channel, int strength, long gameTime) {
