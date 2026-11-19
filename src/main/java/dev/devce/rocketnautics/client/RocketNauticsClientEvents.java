@@ -67,7 +67,7 @@ public class RocketNauticsClientEvents {
             double y = mc.player.getY();
             String dim = mc.level.dimension().location().getPath();
             double threshold = SpaceTransitionHandler.OVERWORLD_SPACE_Y;
-            boolean isAtForcedAltitude = (dim.equals("overworld") && y > threshold - 5000) || (dim.equals("deep_space") && y < 800);
+            boolean isAtForcedAltitude = (dim.equals("overworld") && y > threshold - 500) || (dim.equals("deep_space") && y < 800);
 
             // Avoid capturing the 'forced' value of 2 as the original setting
             if (currentDist > 2 || !isAtForcedAltitude) {
@@ -92,15 +92,15 @@ public class RocketNauticsClientEvents {
                 double threshold = SpaceTransitionHandler.OVERWORLD_SPACE_Y;
 
                 if (dim.equals("overworld")) {
-                    if (y > threshold - 500) targetDist = 2;
-                    else if (y > threshold - 1000) targetDist = 4;
-                    else if (y > threshold - 2000) targetDist = 8;
-                    else if (y > threshold - 5000) targetDist = 12;
+                    if (y > threshold - 50) targetDist = 2;
+                    else if (y > threshold - 100) targetDist = 4;
+                    else if (y > threshold - 200) targetDist = 8;
+                    else if (y > threshold - 500) targetDist = 12;
                 } else if (dim.equals("deep_space")) {
-                    if (y < 200) targetDist = 2;
-                    else if (y < 400) targetDist = 4;
-                    else if (y < 600) targetDist = 8;
-                    else if (y < 800) targetDist = 12;
+                    if (y < 20) targetDist = 2;
+                    else if (y < 40) targetDist = 4;
+                    else if (y < 60) targetDist = 8;
+                    else if (y < 80) targetDist = 12;
                 }
             }
 

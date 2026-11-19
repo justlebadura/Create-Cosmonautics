@@ -63,7 +63,7 @@ public class BoosterThrusterBlockEntity extends AbstractThrusterBlockEntity {
         );
         int limit = RocketConfig.SERVER.brokenBarrier.get() ? 100 : 20;
         thrustPower.between(1, limit);
-        thrustPower.withFormatter(v -> (v * 50) + " N");
+        thrustPower.withFormatter(v -> (v * 0.05) + " kN");
         thrustPower.setValue(limit);
 
         behaviours.add(thrustPower);
@@ -77,7 +77,7 @@ public class BoosterThrusterBlockEntity extends AbstractThrusterBlockEntity {
         Direction facing = getThrustDirection();
         thrust.withOffset(new Vec3(0.5, 0.5, 0.5).add(facing.getStepX() * 0.5, facing.getStepY() * 0.5, facing.getStepZ() * 0.5));
         thrust.update(
-                (float) (thrustPower.getValue() * 50.0f),
+                (float) (thrustPower.getValue() * ThrustBehaviour.THRUST_PER_SCROLL),
                 currentlyBurning ? 1.0f : 0.0f,
                 new Vec3(facing.getStepX(), facing.getStepY(), facing.getStepZ()),
                 isActive()
@@ -262,7 +262,7 @@ public class BoosterThrusterBlockEntity extends AbstractThrusterBlockEntity {
         if (!isActive()) return;
         Direction facing = getThrustDirection();
         Direction pushDirection = facing.getOpposite();
-        double currentThrust = thrustPower.getValue() * 50.0;
+        double currentThrust = thrustPower.getValue() * ThrustBehaviour.THRUST_PER_SCROLL;
         Vector3d thrustVector = new Vector3d(pushDirection.getStepX() * currentThrust, pushDirection.getStepY() * currentThrust, pushDirection.getStepZ() * currentThrust);
 
         Vector3d forcePos = new Vector3d(
@@ -497,7 +497,7 @@ public class BoosterThrusterBlockEntity extends AbstractThrusterBlockEntity {
     @Override
     public double readValue(String key) {
         if ("active".equals(key) || "ignition".equals(key)) return isActive() ? 1.0 : 0.0;
-        if ("thrust".equals(key)) return isActive() ? (thrustPower.getValue() * 50.0) : 0.0;
+        if ("thrust".equals(key)) return isActive() ? (thrustPower.getValue() * ThrustBehaviour.THRUST_PER_SCROLL) : 0.0;
         if ("throttle".equals(key)) return isActive() ? 1.0 : 0.0;
         return 0;
     }

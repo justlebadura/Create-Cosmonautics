@@ -55,7 +55,7 @@ public abstract class LevelRendererMixin implements StarBufferExposer {
 
         double y = pos.y + SkyDataHandler.getHeightOffsetForLevel(Minecraft.getInstance().level.dimension());
         if (y > 1000.0) {
-            float factor = (float) Mth.clamp((y - 1000.0) / 2000.0, 0.0, 1.0);
+            float factor = (float) Mth.clamp((y - 100.0) / 200.0, 0.0, 1.0);
             
             return new Vec3(
                 Mth.lerp(factor, color.x, 0.0),

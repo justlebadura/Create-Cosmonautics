@@ -118,7 +118,7 @@ public class ThrusterMountBlockEntity extends SmartBlockEntity
                 this,
                 new ThrusterMountValueBox());
         thrustLimit.between(0, 200);
-        thrustLimit.withFormatter(v -> (v * 50) + " N");
+        thrustLimit.withFormatter(v -> (v * 0.05) + " kN");
         thrustLimit.setValue(200);
 
         behaviours.add(thrust);
@@ -371,7 +371,7 @@ public class ThrusterMountBlockEntity extends SmartBlockEntity
 
         float force = 0.0f;
         if (be.isThrusting && be.thrustLimit != null) {
-            force = be.thrustLimit.getValue() * 50.0f; // Each step is 50 N
+            force = be.thrustLimit.getValue() * ThrustBehaviour.THRUST_PER_SCROLL; // Matches Propulsion scale (1 kN = 1000 units)
         }
 
         be.thrust.update(
@@ -450,7 +450,7 @@ public class ThrusterMountBlockEntity extends SmartBlockEntity
         }
 
         if (isThrusting) {
-            float totalThrust = thrustLimit != null ? (thrustLimit.getValue() * 0.05f) : (10.0f * getThrustModifier());
+            float totalThrust = thrustLimit != null ? (thrustLimit.getValue() * ThrustBehaviour.THRUST_PER_SCROLL) : (10.0f * getThrustModifier());
             FluidStack fuel = tank1.getFluid().is(RocketTags.FluidTags.ROCKET_FUEL.tag) ? tank1.getFluid() : tank2.getFluid();
             float consumptionMultiplier = getEfficiencyModifier() * RocketFuelProperties.forFuel(fuel).consumptionMultiplier();
             tooltip.add(Component.literal("  Thrust: ").append(Component.literal(String.format("%.1f kN", totalThrust))

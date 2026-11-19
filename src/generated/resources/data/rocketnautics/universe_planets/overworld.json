@@ -1,25 +1,25 @@
 {
   "parent": "sol",
-  "acceleration_at_surface": 11.0,
+  "acceleration_at_surface": 0.0015,
   "dimension_data": {
     "allowed_transfer": "all",
     "atmosphere_composition": {
-      "21000": [
+      "2100": [
         "low_density",
         "drowning"
       ],
-      "5000": []
+      "500": []
     },
-    "dimension_transfer_height": 20000,
+    "dimension_transfer_height": 2000,
     "entity_drag_multiplier": [
       {
-        "altitude": 4000.0,
+        "altitude": 400.0,
         "slope": 0.0,
         "value": 1.0
       },
       {
-        "altitude": 7000.0,
-        "slope": -6.0E-4,
+        "altitude": 700.0,
+        "slope": -0.0006,
         "value": 0.0
       }
     ],
@@ -189,7 +189,7 @@
     "period_seconds": 604800.0
   },
   "priority": 0,
-  "radius": 3000000.0,
+  "radius": 4000.0,
   "rotation": {
     "type": "period",
     "period_seconds": 1200.0,

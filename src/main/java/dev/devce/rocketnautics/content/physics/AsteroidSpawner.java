@@ -173,7 +173,7 @@ public class AsteroidSpawner {
         ServerLevel level = (ServerLevel) player.level();
         
         
-        boolean inSpace = level.dimension().location().getPath().equals("space") || player.getY() > 5000;
+        boolean inSpace = level.dimension().location().getPath().equals("space") || player.getY() > 500;
         if (!inSpace) return;
 
         if (RANDOM.nextDouble() < SPAWN_CHANCE) {

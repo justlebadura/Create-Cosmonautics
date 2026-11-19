@@ -405,7 +405,7 @@ public final class CosmonauticsCommand {
             altitudeAboveSurface = customAltitudeAboveSurface;
         } else {
             // Default safe orbital insertion altitude above surface
-            altitudeAboveSurface = Math.max(transitionHeight + 10000.0, planetRadius * 0.25);
+            altitudeAboveSurface = Math.max(transitionHeight + 1000.0, planetRadius * 0.25);
         }
 
         double orbitalRadius = planetRadius + altitudeAboveSurface;

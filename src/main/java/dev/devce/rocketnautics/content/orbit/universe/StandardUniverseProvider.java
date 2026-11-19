@@ -17,8 +17,8 @@ import org.joml.Vector3f;
 import java.util.EnumSet;
 
 public final class StandardUniverseProvider {
-    private static final double solRadius = 300_000_000D;
-    private static final double overworldRadius = 3_000_000D; // 1 / 10th of the dimension radius
+    private static final double solRadius = 3_000_000D; // compacted: Propulsion-scale universe
+    private static final double overworldRadius = 4_000D; // notional planet radius for the compact universe
     private static final int overworldOrbitalYearInOverworldDays = 72 * 7; // one real-life week. Balance between a shorter time and having a large sphere of influence.
     private static final int overworldDaynightCycleLengthSeconds = 1200;
     private static final int lunarMonthInOverworldDays = 8 * 3; // 8 real-life hours
@@ -62,7 +62,7 @@ public final class StandardUniverseProvider {
 
     public static PlanetDefinitionBuilder overworld() {
         return new PlanetDefinitionBuilder("sol", "overworld")
-                .setAccelerationAtSurface(11)
+                .setAccelerationAtSurface(0.0015)
                 .setClouds(true)
                 .setParentIsShadowLightSource()
                 .setTextureDefinition(new BiomeSamplingTextureBuilder()
@@ -103,11 +103,11 @@ public final class StandardUniverseProvider {
                         .build(30, 120, 40))
                 .setLinkedDimension(Level.OVERWORLD)
                 .setRenderUniverseInDimension(true)
-                .setDimensionTransferHeight(20_000)
-                .addEntityDragPoint(4_000, 1, 0)
-                .addEntityDragPoint(7_000, 0, -0.0006)
-                .setAtmosphereFlagsBelow(5_000, AtmosphereFlags.empty())
-                .setAtmosphereFlagsBelow(21_000, EnumSet.of(AtmosphereFlags.DROWNING, AtmosphereFlags.LOW_DENSITY))
+                .setDimensionTransferHeight(2_000)
+                .addEntityDragPoint(400, 1, 0)
+                .addEntityDragPoint(700, 0, -0.0006)
+                .setAtmosphereFlagsBelow(500, AtmosphereFlags.empty())
+                .setAtmosphereFlagsBelow(2_100, EnumSet.of(AtmosphereFlags.DROWNING, AtmosphereFlags.LOW_DENSITY))
                 .setRadius(overworldRadius)
                 .setCircularOrbit(overworldOrbitalYearInOverworldDays * overworldDaynightCycleLengthSeconds, Vector3D.PLUS_J)
                 .setRotationPeriod(Vector3D.MINUS_J, overworldDaynightCycleLengthSeconds)
@@ -123,7 +123,7 @@ public final class StandardUniverseProvider {
     public static PlanetDefinitionBuilder moon() {
         return new PlanetDefinitionBuilder("overworld", "moon")
                 .setShadowLightSource("sol")
-                .setAccelerationAtSurface(2)
+                .setAccelerationAtSurface(0.00027)
                 .setTextureDefinition(new BiomeSamplingTextureBuilder()
                         .addMatchingTag(RocketTags.BiomeTags.LUNAR_CHASM.tag)
                         .setPriority(10)
@@ -138,10 +138,10 @@ public final class StandardUniverseProvider {
                 .setRenderUniverseInDimension(true)
                 .setDimensionDayTimeController("sol")
                 .setApplyGravityCorrectionToEntities(true)
-                .setDimensionTransferHeight(20000)
-                .addEntityDragPoint(4_000, 1, 0)
-                .addEntityDragPoint(7_000, 0, -0.0006)
-                .setAtmosphereFlagsBelow(21_000, EnumSet.of(AtmosphereFlags.DROWNING, AtmosphereFlags.LOW_DENSITY))
+                .setDimensionTransferHeight(2_000)
+                .addEntityDragPoint(400, 1, 0)
+                .addEntityDragPoint(700, 0, -0.0006)
+                .setAtmosphereFlagsBelow(2_100, EnumSet.of(AtmosphereFlags.DROWNING, AtmosphereFlags.LOW_DENSITY))
                 .setCircularOrbit(lunarMonthInOverworldDays * overworldDaynightCycleLengthSeconds, Vector3D.PLUS_J)
                 .setRadius(overworldRadius / 4)
                 .setTidalLocked()
@@ -150,7 +150,7 @@ public final class StandardUniverseProvider {
 
     public static PlanetDefinitionBuilder mars() {
         return new PlanetDefinitionBuilder("sol", "mars")
-                .setAccelerationAtSurface(3.7)
+                .setAccelerationAtSurface(2.08)
                 .setParentIsShadowLightSource()
                 .setRadius(overworldRadius * 0.53) // Mars is smaller than Earth
                 .setCircularOrbit((int) (overworldOrbitalYearInOverworldDays * 1.88) * overworldDaynightCycleLengthSeconds, Vector3D.PLUS_J)
@@ -161,7 +161,7 @@ public final class StandardUniverseProvider {
 
     public static PlanetDefinitionBuilder gasGiant() {
         return new PlanetDefinitionBuilder("sol", "gas_giant")
-                .setAccelerationAtSurface(24.8)
+                .setAccelerationAtSurface(13.9)
                 .setParentIsShadowLightSource()
                 .setRadius(overworldRadius * 4.2) // Jupiter is massive!
                 .setCircularOrbit(overworldOrbitalYearInOverworldDays * 4 * overworldDaynightCycleLengthSeconds, Vector3D.PLUS_J)
@@ -172,7 +172,7 @@ public final class StandardUniverseProvider {
 
     public static PlanetDefinitionBuilder iceWorld() {
         return new PlanetDefinitionBuilder("sol", "ice_world")
-                .setAccelerationAtSurface(11.0)
+                .setAccelerationAtSurface(6.17)
                 .setParentIsShadowLightSource()
                 .setRadius(overworldRadius * 1.8) // Neptune-like
                 .setCircularOrbit(overworldOrbitalYearInOverworldDays * 8 * overworldDaynightCycleLengthSeconds, Vector3D.PLUS_J)

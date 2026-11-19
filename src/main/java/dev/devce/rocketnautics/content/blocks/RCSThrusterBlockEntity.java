@@ -2,6 +2,7 @@ package dev.devce.rocketnautics.content.blocks;
 
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
+import dev.devce.rocketnautics.content.blocks.ThrustBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -55,7 +56,7 @@ public class RCSThrusterBlockEntity extends AbstractThrusterBlockEntity {
         Direction facing = getThrustDirection();
         thrust.withOffset(new Vec3(0.5, 0.5, 0.5).add(facing.getStepX() * 0.5, facing.getStepY() * 0.5, facing.getStepZ() * 0.5));
         thrust.update(
-                (float) calculateRcsThrust(),
+                (float) (calculateRcsThrust() * ThrustBehaviour.THRUST_PER_SCROLL),
                 active ? 1.0f : 0.0f,
                 new Vec3(facing.getStepX(), facing.getStepY(), facing.getStepZ()),
                 active
@@ -144,11 +145,11 @@ public class RCSThrusterBlockEntity extends AbstractThrusterBlockEntity {
             }
         }
 
-        if (y < 5000) {
-            if (y <= 2000) {
+        if (y < 500) {
+            if (y <= 200) {
                 maxThrust = 12.0;
             } else {
-                double factor = (y - 2000.0) / 3000.0;
+                double factor = (y - 200.0) / 300.0;
                 maxThrust = 12.0 + (93.0 * factor);
             }
         }

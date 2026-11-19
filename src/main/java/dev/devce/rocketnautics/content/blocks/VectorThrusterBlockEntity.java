@@ -159,7 +159,7 @@ public class VectorThrusterBlockEntity extends RocketThrusterBlockEntity {
         super.tick();
 
         thrust.update(
-                getCurrentPower() * 50.0f,
+                getCurrentPower() * ThrustBehaviour.THRUST_PER_SCROLL,
                 fuelThrottle,
                 getGimbaledExhaustDirection(),
                 isActive()

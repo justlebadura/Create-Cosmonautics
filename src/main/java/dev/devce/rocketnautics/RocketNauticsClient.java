@@ -562,7 +562,7 @@ public class RocketNauticsClient {
                     for (net.minecraft.world.level.block.entity.BlockEntity be : chunk.getBlockEntities().values()) {
                         if (be instanceof dev.devce.rocketnautics.content.blocks.RocketThrusterBlockEntity thruster && thruster.isActive()) {
                             net.minecraft.core.Direction dir = thruster.getThrustDirection().getOpposite();
-                            double power = thruster.getCurrentPower() * 50.0;
+                            double power = thruster.getCurrentPower() * dev.devce.rocketnautics.content.blocks.ThrustBehaviour.THRUST_PER_SCROLL;
                             Vector3d thrustDir = new Vector3d(dir.getStepX(), dir.getStepY(), dir.getStepZ()).rotate(ship.logicalPose().orientation()).mul(power);
                             netThrust.add(thrustDir);
                         }
@@ -583,10 +583,10 @@ public class RocketNauticsClient {
 
             // Apply thrust, gravity, and drag
             currentVel.add(thrustAccel);
-            currentVel.y -= 0.04; // Gravity approx
+            currentVel.y -= 0.004; // Gravity approx (Sable scale)
 
             // Apply drag only if in atmosphere
-            if (currentPos.y < 2000 && !level.dimension().location().getPath().equals("space")) {
+            if (currentPos.y < 200 && !level.dimension().location().getPath().equals("space")) {
                 currentVel.mul(0.99); // Drag approx
             }
 

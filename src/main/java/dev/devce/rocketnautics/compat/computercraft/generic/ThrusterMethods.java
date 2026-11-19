@@ -92,7 +92,7 @@ public class ThrusterMethods implements GenericPeripheral {
             }
             case BoosterThrusterBlockEntity bt -> {
                 data.put("ignition_ticks", bt.ignitionTicks);
-                data.put("thrust_power", bt.getThrustPower().getValue() * 50);
+                data.put("thrust_power", bt.getThrustPower().getValue() * ThrustBehaviour.THRUST_PER_SCROLL);
                 data.put("ignited", bt.isIgnited());
                 data.put("is_spent", bt.isSpent());
                 data.put("fuel_ticks", bt.getFuelTicks());

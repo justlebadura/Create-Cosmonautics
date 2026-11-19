@@ -59,9 +59,9 @@ public class SkyHandler {
         if (mc.level == null || mc.player == null) return;
 
         double y = mc.gameRenderer.getMainCamera().getPosition().y + SkyDataHandler.getHeightOffsetForLevel(mc.level.dimension());
-        if (y > 1000.0) {
+        if (y > 100.0) {
             // Gradually fade fog to black above 1000m
-            float factor = (float) Mth.clamp((y - 1000.0) / 1000.0, 0.0, 1.0);
+            float factor = (float) Mth.clamp((y - 100.0) / 100.0, 0.0, 1.0);
             
             event.setRed(Mth.lerp(factor, event.getRed(), 0.0f));
             event.setGreen(Mth.lerp(factor, event.getGreen(), 0.0f));
@@ -142,9 +142,9 @@ public class SkyHandler {
         }
 
         double camY = camera.getPosition().y + SkyDataHandler.getHeightOffsetForLevel(level.dimension());
-        if (camY >= 1000.0) {
+        if (camY >= 100.0) {
             // Determine visibility based on altitude
-            float visibility = (float) Mth.clamp((camY - 1000.0) / 500.0, 0.0, 1.0);
+            float visibility = (float) Mth.clamp((camY - 100.0) / 50.0, 0.0, 1.0);
             if (visibility > 0) {
 
                 // Render custom HD skybox at high altitude!
@@ -337,14 +337,14 @@ public class SkyHandler {
         if (mc.level == null || mc.player == null) return;
         
         double y = mc.gameRenderer.getMainCamera().getPosition().y + SkyDataHandler.getHeightOffsetForLevel(mc.level.dimension());
-        if (y > 1000.0) {
-            float factor = (float) Mth.clamp((y - 1000.0) / 1000.0, 0.0, 1.0);
+        if (y > 100.0) {
+            float factor = (float) Mth.clamp((y - 100.0) / 100.0, 0.0, 1.0);
             
             float start = event.getNearPlaneDistance();
             float end = event.getFarPlaneDistance();
             
-            event.setNearPlaneDistance(Mth.lerp(factor, start, 1000.0f));
-            event.setFarPlaneDistance(Mth.lerp(factor, end, 2000.0f));
+            event.setNearPlaneDistance(Mth.lerp(factor, start, 100.0f));
+            event.setFarPlaneDistance(Mth.lerp(factor, end, 200.0f));
             event.setCanceled(true);
         }
     }
@@ -2017,7 +2017,7 @@ public class SkyHandler {
         double camY = mc.gameRenderer.getMainCamera().getPosition().y + SkyDataHandler.getHeightOffsetForLevel(mc.level.dimension());
 
         // At high altitudes (between 1000m and 2000m), mute ALL sounds except our high wind loop!
-        if (camY >= 1000.0 && camY < 2000.0) {
+        if (camY >= 100.0 && camY < 200.0) {
             net.minecraft.client.resources.sounds.SoundInstance sound = event.getSound();
             if (sound != null) {
                 String path = sound.getLocation().getPath();
@@ -2051,7 +2051,7 @@ public class SkyHandler {
         }
 
         // Stop all currently playing sounds once when crossing into the high wind zone
-        if (camY >= 1000.0 && camY < 2000.0) {
+        if (camY >= 100.0 && camY < 200.0) {
             if (!clearedOtherSounds) {
                 mc.getSoundManager().stop(); // clear all active sounds
                 clearedOtherSounds = true;

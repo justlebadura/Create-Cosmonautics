@@ -1,6 +1,6 @@
 {
   "parent": "sol",
-  "acceleration_at_surface": 11.0,
+  "acceleration_at_surface": 6.17,
   "name": "ice_world",
   "planet_atmosphere": {},
   "planet_extras": {

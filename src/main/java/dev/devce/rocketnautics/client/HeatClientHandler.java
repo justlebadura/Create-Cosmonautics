@@ -74,7 +74,7 @@ public class HeatClientHandler {
                         double currentY = currentPos.y();
 
                         // Altitude check: between 1000 and 5000 blocks
-                        if (currentY > 1000 && currentY < 5000) {
+                        if (currentY > 100 && currentY < 500) {
                             // In real life sonic boom is ~17 blocks/tick, but in Minecraft engine speeds are lower.
                             // Start effect at 2.5 blocks/tick (50 m/s), max out at 6.0 blocks/tick (120 m/s)
                             if (deltaDist > 2.5) {
@@ -83,10 +83,10 @@ public class HeatClientHandler {
                                 
                                 // Smoothly fade in/out based on altitude edges (1000-1500 and 4500-5000)
                                 float altFactor = 1.0f;
-                                if (currentY < 1500) {
-                                    altFactor = (float) ((currentY - 1000) / 500.0);
-                                } else if (currentY > 4500) {
-                                    altFactor = (float) ((5000 - currentY) / 500.0);
+                                if (currentY < 150) {
+                                    altFactor = (float) ((currentY - 100) / 50.0);
+                                } else if (currentY > 450) {
+                                    altFactor = (float) ((500 - currentY) / 50.0);
                                 }
                                 
                                 float finalIntensity = speedFactor * altFactor;

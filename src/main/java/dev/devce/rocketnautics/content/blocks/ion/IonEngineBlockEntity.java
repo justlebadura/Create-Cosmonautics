@@ -28,7 +28,7 @@ import java.util.List;
 public class IonEngineBlockEntity extends AbstractThrusterBlockEntity {
 
     public static final int MAX_ENERGY_USAGE = 160; // 160 FE/t at 100% throttle (15 redstone)
-    public static final double MAX_VACUUM_THRUST = 180.0; // 180 N at 100% throttle in vacuum
+    public static final double MAX_VACUUM_THRUST = 0.8; // 0.8 force units at 100% throttle in vacuum, matching Create: Propulsion's ion thruster
 
     public ThrustBehaviour thrust;
     public boolean currentlyBurning = false;
@@ -205,12 +205,12 @@ public class IonEngineBlockEntity extends AbstractThrusterBlockEntity {
         }
 
         // Atmosphere thrust dropoff (cannot lift heavy craft from planetary ground)
-        if (y < 5000) {
-            if (y <= 2000) {
-                maxThrust = 15.0;
+        if (y < 500) {
+            if (y <= 200) {
+                maxThrust = 0.07;
             } else {
-                double factor = (y - 2000.0) / 3000.0;
-                maxThrust = 15.0 + ((MAX_VACUUM_THRUST - 15.0) * factor);
+                double factor = (y - 200.0) / 300.0;
+                maxThrust = 0.07 + ((MAX_VACUUM_THRUST - 0.07) * factor);
             }
         }
 
@@ -256,7 +256,7 @@ public class IonEngineBlockEntity extends AbstractThrusterBlockEntity {
                 .append(Component.literal(signal + "/15 (" + pct + "%)").withStyle(signal > 0 ? ChatFormatting.AQUA : ChatFormatting.GRAY)));
 
         tooltip.add(Component.literal("  Thrust: ")
-                .append(Component.literal(String.format("%.1f N", currentThrustCalculated)).withStyle(ChatFormatting.GOLD)));
+                .append(Component.literal(String.format("%.2f kN", currentThrustCalculated)).withStyle(ChatFormatting.GOLD)));
 
         tooltip.add(Component.literal("  Consumption: ")
                 .append(Component.literal(currentEnergyUsage + " FE/t").withStyle(ChatFormatting.AQUA)));

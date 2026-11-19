@@ -161,7 +161,7 @@ public class AltimeterSpeedProgram implements MFDProgram {
 
         renderDialFace(canvas, cx, cy, GREEN_BRIGHT, GOLD);
 
-        double maxAlt = isOrbital ? 2000000.0 : 2500.0;
+        double maxAlt = isOrbital ? 20000.0 : 250.0;
         double frac = Math.min(1.0, Math.max(0.0, altitude / maxAlt));
         renderNeedle(canvas, cx, cy, frac);
 
@@ -176,7 +176,7 @@ public class AltimeterSpeedProgram implements MFDProgram {
         int textX = boxX + (boxW - text.length() * 4 + 1) / 2;
         canvas.drawString(text, textX, boxY + 2, TEXT_COLOR);
 
-        String unit = altitude >= 10000.0 ? "KM" : "M";
+        String unit = altitude >= 1000.0 ? "KM" : "M";
         int unitX = cx - (unit.length() * 4 - 1) / 2;
         canvas.drawString(unit, unitX, boxY + 11, GREEN_MUTED);
     }

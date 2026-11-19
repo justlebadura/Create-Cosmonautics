@@ -48,8 +48,8 @@ public abstract class ClientLevelMixin extends Level {
         }
         double y = pos.y; 
 
-        if (y > 800) {
-            float factor = (float) Mth.clamp((y - 1000.0) / 2000.0, 0.0, 1.0);
+        if (y > 80) {
+            float factor = (float) Mth.clamp((y - 100.0) / 200.0, 0.0, 1.0);
             if (factor <= 0.0f) return;
 
             Vec3 originalColor = cir.getReturnValue();

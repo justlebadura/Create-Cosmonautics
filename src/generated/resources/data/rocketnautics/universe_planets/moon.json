@@ -1,26 +1,26 @@
 {
   "parent": "overworld",
-  "acceleration_at_surface": 2.0,
+  "acceleration_at_surface": 0.00027,
   "dimension_data": {
     "allowed_transfer": "all",
     "apply_gravity_correction_to_entities_in_dimension": true,
     "atmosphere_composition": {
-      "21000": [
+      "2100": [
         "low_density",
         "drowning"
       ]
     },
     "dimension_day_time_controller_name": "sol",
-    "dimension_transfer_height": 20000,
+    "dimension_transfer_height": 2000,
     "entity_drag_multiplier": [
       {
-        "altitude": 4000.0,
+        "altitude": 400.0,
         "slope": 0.0,
         "value": 1.0
       },
       {
-        "altitude": 7000.0,
-        "slope": -6.0E-4,
+        "altitude": 700.0,
+        "slope": -0.0006,
         "value": 0.0
       }
     ],
@@ -78,7 +78,7 @@
     "period_seconds": 28800.0
   },
   "priority": 0,
-  "radius": 750000.0,
+  "radius": 1000.0,
   "rotation": {
     "type": "tidal_lock",
     "rotations_per_orbit": -1.0

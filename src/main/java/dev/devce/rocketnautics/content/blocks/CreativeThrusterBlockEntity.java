@@ -48,7 +48,7 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 new CenteredSideValueBoxTransform(
                         (state, direction) -> direction != state.getValue(CreativeThrusterBlock.FACING)));
         minThrust.between(0, 200);
-        minThrust.withFormatter(v -> (v * 50) + " N");
+        minThrust.withFormatter(v -> (v * 0.05) + " kN");
         minThrust.setValue(0);
 
         maxThrust = new ScrollValueBehaviour(
@@ -57,7 +57,7 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
                 new CenteredSideValueBoxTransform(
                         (state, direction) -> direction != state.getValue(CreativeThrusterBlock.FACING)));
         maxThrust.between(0, 200);
-        maxThrust.withFormatter(v -> (v * 50) + " N");
+        maxThrust.withFormatter(v -> (v * 0.05) + " kN");
         maxThrust.setValue(200);
 
         thrust = new ThrustBehaviour(this)
@@ -120,7 +120,7 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
         Direction facing = getThrustDirection();
         thrust.withOffset(new Vec3(0.5, 0.5, 0.5).add(facing.getStepX() * 0.5, facing.getStepY() * 0.5, facing.getStepZ() * 0.5));
         thrust.update(
-                getCurrentPower() * 50.0f,
+                getCurrentPower() * ThrustBehaviour.THRUST_PER_SCROLL,
                 fuelThrottle,
                 new Vec3(facing.getStepX(), facing.getStepY(), facing.getStepZ()),
                 isActive()
@@ -205,7 +205,7 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
     @Override
     public double readValue(String key) {
         if ("active".equals(key) || "ignition".equals(key)) return isActive() ? 1.0 : 0.0;
-        if ("thrust".equals(key)) return getCurrentPower() * 50.0;
+        if ("thrust".equals(key)) return getCurrentPower() * ThrustBehaviour.THRUST_PER_SCROLL;
         if ("throttle".equals(key)) return fuelThrottle;
         return 0;
     }
@@ -220,7 +220,7 @@ public class CreativeThrusterBlockEntity extends AbstractThrusterBlockEntity {
             setActive(value > 0);
             var behavior = getThrustPower();
             if (behavior != null) {
-                float maxN = behavior.getValue() * 50.0f;
+                float maxN = behavior.getValue() * ThrustBehaviour.THRUST_PER_SCROLL;
                 setThrottle(maxN > 0 ? (float) (value / maxN) : 0);
             } else {
                 setThrottle((float) value);

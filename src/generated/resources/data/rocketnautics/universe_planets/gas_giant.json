@@ -1,6 +1,6 @@
 {
   "parent": "sol",
-  "acceleration_at_surface": 24.8,
+  "acceleration_at_surface": 13.9,
   "name": "gas_giant",
   "planet_atmosphere": {},
   "planet_extras": {
@@ -20,7 +20,7 @@
     "period_seconds": 2419200.0
   },
   "priority": 0,
-  "radius": 1.26E7,
+  "radius": 12600000.0,
   "rotation": {
     "type": "period",
     "period_seconds": 500.0,

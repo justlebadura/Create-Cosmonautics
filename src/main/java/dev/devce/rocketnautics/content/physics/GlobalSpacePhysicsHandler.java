@@ -52,8 +52,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @EventBusSubscriber(modid = RocketNautics.MODID)
 public class GlobalSpacePhysicsHandler {
 
-    private static final double SPACE_GRAVITY_START_Y = 2000.0;
-    private static final double SPACE_GRAVITY_FULL_Y = 5000.0;
+    private static final double SPACE_GRAVITY_START_Y = 100.0;
+    private static final double SPACE_GRAVITY_FULL_Y = 250.0;
     private static final double REENTRY_HEAT_START_Y = 1000.0;
     private static final double REENTRY_HEAT_END_Y = 2500.0;
     private static final double REENTRY_SPEED_THRESHOLD = 60.0;
@@ -303,7 +303,7 @@ public class GlobalSpacePhysicsHandler {
             return 1.0;
         }
 
-        // Overworld transition logic: starts at 2000m, full at 5000m
+        // Overworld transition logic: starts at 100m, full at 250m
         if (y <= SPACE_GRAVITY_START_Y) return 0.0;
         return Math.clamp((y - SPACE_GRAVITY_START_Y) / (SPACE_GRAVITY_FULL_Y - SPACE_GRAVITY_START_Y), 0.0, 1.0);
     }
@@ -313,7 +313,7 @@ public class GlobalSpacePhysicsHandler {
      */
     private static void applyMaxQStress(ServerSubLevel subLevel, RigidBodyHandle handle, ServerLevel level, Vector3d worldPos, double timeStep) {
         double altitude = worldPos.y();
-        if (altitude > 10000.0) return; // Expanded limit for testing
+        if (altitude > 500.0) return; // Expanded limit for testing
 
         double density = 1.0 - calculateGravityFactor(level, altitude);
         if (density < 0.05) return; // Too thin to cause stress

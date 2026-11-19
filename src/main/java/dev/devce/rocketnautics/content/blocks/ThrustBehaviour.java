@@ -31,6 +31,13 @@ public class ThrustBehaviour extends BlockEntityBehaviour {
         ROCKET, RCS, STEAM, ION
     }
 
+    /**
+     * Conversion from scroll-unit thrust to Sable force units. Matches Create: Propulsion's
+     * scale, where 1 displayed kN equals 1000 internal thrust units: a scroll value of 20
+     * now applies 1.0 force unit (Propulsion's standard thruster is ~0.533).
+     */
+    public static final float THRUST_PER_SCROLL = 0.05f;
+
     // Configuration
     private EngineType engineType = EngineType.ROCKET;
     private Vec3 offset = new Vec3(0.5, 0.5, 0.5); // Local offset within block
@@ -78,35 +85,35 @@ public class ThrustBehaviour extends BlockEntityBehaviour {
         float visualThrottle = this.throttle;
         float maxThrust = 0f;
         if (blockEntity instanceof dev.devce.rocketnautics.content.blocks.RocketThrusterBlockEntity rt) {
-            maxThrust = rt.maxThrust.getValue() * 50.0f;
+            maxThrust = rt.maxThrust.getValue() * THRUST_PER_SCROLL;
         } else if (blockEntity instanceof dev.devce.rocketnautics.content.blocks.RCSThrusterBlockEntity rcs) {
             double rcsMax = 105.0;
             if (level.isClientSide) {
                 dev.ryanhcode.sable.sublevel.ClientSubLevel subLevel = dev.ryanhcode.sable.Sable.HELPER.getContainingClient(rcs);
                 double y = subLevel != null ? subLevel.logicalPose().position().y : rcs.getBlockPos().getY();
-                if (y < 5000) {
-                    if (y <= 2000) {
+                if (y < 500) {
+                    if (y <= 200) {
                         rcsMax = 12.0;
                     } else {
-                        double factor = (y - 2000.0) / 3000.0;
+                        double factor = (y - 200.0) / 300.0;
                         rcsMax = 12.0 + (93.0 * factor);
                     }
                 }
             } else {
                 dev.ryanhcode.sable.sublevel.SubLevel ship = (dev.ryanhcode.sable.sublevel.SubLevel) dev.ryanhcode.sable.Sable.HELPER.getContaining(level, rcs.getBlockPos());
                 double y = ship != null ? ship.logicalPose().position().y : rcs.getBlockPos().getY();
-                if (y < 5000) {
-                    if (y <= 2000) {
+                if (y < 500) {
+                    if (y <= 200) {
                         rcsMax = 12.0;
                     } else {
-                        double factor = (y - 2000.0) / 3000.0;
+                        double factor = (y - 200.0) / 300.0;
                         rcsMax = 12.0 + (93.0 * factor);
                     }
                 }
             }
-            maxThrust = (float) rcsMax;
+            maxThrust = (float) (rcsMax * THRUST_PER_SCROLL);
         } else if (blockEntity instanceof dev.devce.rocketnautics.content.blocks.ThrusterMountBlockEntity tm) {
-            maxThrust = (200 * tm.getThrustModifier()) * 50.0f;
+            maxThrust = (200 * tm.getThrustModifier()) * THRUST_PER_SCROLL;
         }
         
         if (maxThrust > 0.01f) {
@@ -193,7 +200,7 @@ public class ThrustBehaviour extends BlockEntityBehaviour {
 
         // Rocket/Steam logic
         float visualBoost = 1.0f + (throttle * 0.5f);
-        int visualPower = (int) (currentThrustN / 50.0f * 14.25f); // Scaled for particle density
+        int visualPower = (int) (currentThrustN / THRUST_PER_SCROLL * 14.25f); // Scaled for particle density
         int plumeCount = 1 + (visualPower / 20);
         float baseSpeedMult = 0.8f + (visualPower / 100.0f) * 1.2f;
 
@@ -309,7 +316,7 @@ public class ThrustBehaviour extends BlockEntityBehaviour {
 
     private void applyWorldEffects(Level level) {
         BlockPos pos = getPos();
-        int visualPower = (int) (currentThrustN / 50.0f * 2.85f);
+        int visualPower = (int) (currentThrustN / THRUST_PER_SCROLL * 2.85f);
         double reach = 1.0 + (visualPower / 5.0);
         Vec3 start = new Vec3(pos.getX() + offset.x, pos.getY() + offset.y, pos.getZ() + offset.z);
         Vec3 end = start.add(exhaustDir.scale(reach));

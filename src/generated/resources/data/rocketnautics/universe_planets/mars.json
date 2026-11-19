@@ -1,6 +1,6 @@
 {
   "parent": "sol",
-  "acceleration_at_surface": 3.7,
+  "acceleration_at_surface": 2.08,
   "name": "mars",
   "planet_atmosphere": {},
   "planet_extras": {

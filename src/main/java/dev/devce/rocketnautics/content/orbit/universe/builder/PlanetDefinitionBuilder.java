@@ -261,7 +261,7 @@ public class PlanetDefinitionBuilder {
             }
         }
         return new PlanetDimensionData(linkedDimension.get(), allowedTransfer.orElse(AllowedTransfer.NONE),
-                transferHeight.orElse(20_000),
+                transferHeight.orElse(2_000),
                 atmosphere.map(m -> (Int2ObjectSortedMap<EnumSet<AtmosphereFlags>>) new Int2ObjectAVLTreeMap<>(m)).orElse(Int2ObjectSortedMaps.emptyMap()), // bake into an AVL map for improved search performance
                 renderUniverseInDimension.orElse(false), id, applyGravityCorrectionToEntities.orElse(false),
                 entityDragMultiplier.orElse(PlanetDimensionData.EMPTY_BEZIER));

@@ -1,6 +1,6 @@
 {
   "parent": "root",
-  "mu": 6.907424484959378E18,
+  "mu": 6907424484959.38,
   "name": "sol",
   "planet_atmosphere": {},
   "planet_extras": {
@@ -19,7 +19,7 @@
     }
   },
   "priority": 0,
-  "radius": 3.0E8,
+  "radius": 3000000.0,
   "rotation": {
     "type": "period",
     "period_seconds": 38400.0,
